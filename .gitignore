@@ -5,6 +5,7 @@ audit-*/
 output/
 dist/
 untitled-project/
+.playwright-cli/
 
 # Generated fixtures and local test files
 big-test.pdf

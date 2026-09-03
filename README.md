@@ -27,6 +27,7 @@
 - **笔记可沉淀**：每篇论文独立的 Markdown 编辑与预览。
 - **AI 可选择**：不配置模型也能完整阅读和记笔记；配置后可流式问答、查看思考过程并生成论文卡片。
 - **资源有边界**：离屏画布释放、过期任务取消、渲染并发和像素预算，避免长论文越读越卡。
+- **键盘可操作**：阅读工具、文献菜单和弹窗具备清晰名称、焦点反馈与合理的导航顺序。
 
 | 流式 AI 精读（需自行配置模型） | 390px 窄屏笔记 |
 | --- | --- |
@@ -152,7 +153,7 @@ localhost、127.0.0.1、不同端口和 GitHub Pages 属于不同浏览器 origi
 
 ```bash
 python tools/check.py
-python tools/package_release.py --version 1.1.0
+python tools/package_release.py --version 1.2.0
 ```
 
 `tools/check.py` 检查自有 JavaScript、Python 工具、HTML 本地资源、固定版本依赖和个人绝对路径。涉及 PDF、保存或 AI 流式请求的修改，还应使用独立浏览器 origin 做真实交互回归。

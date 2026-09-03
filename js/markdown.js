@@ -53,7 +53,19 @@ const Markdown = {
         if (last) { replacement.append(node.textContent.slice(last)); node.replaceWith(replacement); }
       }
       fragment.querySelectorAll('p').forEach(p => {
-        if (/^(评[:：]|（评）)/.test(p.textContent.trim())) p.classList.add('ai-opinion');
+        if (!/^(评[:：]|（评）)/.test(p.textContent.trim())) return;
+        const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) {
+          if (!node.textContent.trim()) continue;
+          const prefix = node.textContent.match(/^\s*(?:评[:：]|（评）)\s*/);
+          if (prefix) node.textContent = node.textContent.slice(prefix[0].length);
+          break;
+        }
+        const tag = document.createElement('span');
+        tag.className = 'opinion-tag'; tag.textContent = '我的看法';
+        p.prepend(tag);
+        p.classList.add('ai-opinion');
       });
     }
     const wrapper = document.createElement('div'); wrapper.append(fragment); return wrapper.innerHTML;

@@ -439,43 +439,45 @@ const Reader = {
     let colorDot = '';
     if (this.tool === 'pen') colorDot = '<i class="tool-color-dot" style="background:' + this.penColor + '"></i>';
     if (this.tool === 'marker') colorDot = '<i class="tool-color-dot" style="background:' + this.markerColors[this.hlColorIdx].dot + '"></i>';
-    const toolBtnHtml = (name, title, id) =>
-      '<button class="ibtn tool-btn' + (this.tool === id ? ' active' : '') + '" data-tool="' + id + '" title="' + title + '">' + icon(name, 17) +
-      (colorDot && this.tool === id ? colorDot : '') + '</button>';
+    const toolBtnHtml = (name, label, title, id) => {
+      const active = this.tool === id;
+      return '<button class="ibtn tool-btn' + (active ? ' active' : '') + '" data-tool="' + id + '" aria-label="' + label + '" aria-pressed="' + active + '" title="' + title + '">' + icon(name, 17) +
+        (colorDot && active ? colorDot : '') + '</button>';
+    };
 
     tb.innerHTML =
-      '<button class="rt-back" id="rt-back" title="返回文献库">' + icon('chevron-left', 19) + '</button>' +
+      '<button class="rt-back" id="rt-back" aria-label="返回文献库" title="返回文献库">' + icon('chevron-left', 19) + '</button>' +
       '<div class="rt-title-wrap"><div class="rt-title">' + esc(p.title) + '</div>' +
       '<div class="rt-status"><span>' + (p.status === 'done' ? '已完成' : p.status === 'reading' ? '正在阅读' : '待读') + '</span>' +
       '<span id="rt-pageinfo">P' + this.currentPage + (this.pageCount ? ' / ' + this.pageCount : '') + '</span></div></div>' +
 
       '<div class="rt-center">' +
       '<div class="page-nav">' +
-      '<button class="ibtn" id="pg-prev" title="上一页">' + icon('chevron-up', 16) + '</button>' +
-      '<span class="page-ind"><input id="pg-input" value="' + this.currentPage + '" inputmode="numeric"> / ' + (this.pageCount || '?') + '</span>' +
-      '<button class="ibtn" id="pg-next" title="下一页">' + icon('chevron-down', 16) + '</button>' +
+      '<button class="ibtn" id="pg-prev" aria-label="上一页" title="上一页">' + icon('chevron-up', 16) + '</button>' +
+      '<span class="page-ind"><input id="pg-input" aria-label="页码" value="' + this.currentPage + '" inputmode="numeric"> / ' + (this.pageCount || '?') + '</span>' +
+      '<button class="ibtn" id="pg-next" aria-label="下一页" title="下一页">' + icon('chevron-down', 16) + '</button>' +
       '</div>' +
       '<span class="rt-divider"></span>' +
-      '<button class="ibtn" id="zoom-out" title="缩小">' + icon('zoom-out', 16) + '</button>' +
+      '<button class="ibtn" id="zoom-out" aria-label="缩小" title="缩小">' + icon('zoom-out', 16) + '</button>' +
       '<span class="zoom-label">' + Math.round(this.scale * 100) + '%</span>' +
-      '<button class="ibtn" id="zoom-in" title="放大">' + icon('zoom-in', 16) + '</button>' +
-      '<button class="ibtn' + (this.fitMode ? ' active' : '') + '" id="zoom-fit" title="适宽">' + icon('fit-width', 16) + '</button>' +
+      '<button class="ibtn" id="zoom-in" aria-label="放大" title="放大">' + icon('zoom-in', 16) + '</button>' +
+      '<button class="ibtn' + (this.fitMode ? ' active' : '') + '" id="zoom-fit" aria-label="适宽" aria-pressed="' + this.fitMode + '" title="适宽">' + icon('fit-width', 16) + '</button>' +
       '<span class="rt-divider"></span>' +
-      '<button class="ibtn tool-btn' + (this.tool === 'select' ? ' active' : '') + '" data-tool="select" title="选择文本">' + icon('mouse-pointer', 16) + '</button>' +
+      '<button class="ibtn tool-btn' + (this.tool === 'select' ? ' active' : '') + '" data-tool="select" aria-label="选择文本" aria-pressed="' + (this.tool === 'select') + '" title="选择文本">' + icon('mouse-pointer', 16) + '</button>' +
       '<button class="ibtn tool-btn' + (this.tool === 'hand' ? ' active' : '') + '" data-tool="hand" aria-label="小手拖拽" aria-pressed="' + (this.tool === 'hand') + '" title="小手拖拽：按住鼠标拖动页面">' + icon('hand', 17) + '</button>' +
-      toolBtnHtml('pencil', '画笔（按住涂抹，再点一下换色）', 'pen') +
-      toolBtnHtml('highlighter', '荧光笔（划选句子高亮，再点一下换色）', 'marker') +
-      '<button class="ibtn tool-btn' + (this.tool === 'eraser' ? ' active' : '') + '" data-tool="eraser" title="橡皮擦">' + icon('eraser', 16) + '</button>' +
-      '<button class="ibtn tool-btn' + (this.tool === 'region' ? ' active' : '') + '" data-tool="region" title="框选区域提问">' + icon('box-select', 16) + '</button>' +
-      '<button class="ibtn" id="ink-undo" title="撤销标注 (Ctrl+Z)">' + icon('undo', 16) + '</button>' +
+      toolBtnHtml('pencil', '画笔', '画笔（按住涂抹，再点一下换色）', 'pen') +
+      toolBtnHtml('highlighter', '荧光笔', '荧光笔（划选句子高亮，再点一下换色）', 'marker') +
+      toolBtnHtml('eraser', '橡皮擦', '橡皮擦', 'eraser') +
+      toolBtnHtml('box-select', '框选区域提问', '框选区域提问', 'region') +
+      '<button class="ibtn" id="ink-undo" aria-label="撤销标注 (Ctrl+Z)" title="撤销标注 (Ctrl+Z)">' + icon('undo', 16) + '</button>' +
       '</div>' +
 
       '<div class="rt-right">' +
-      '<button class="ibtn' + (document.getElementById('app').classList.contains('rp-collapsed') ? '' : ' active') + '" id="rt-panel-toggle" title="显示 / 隐藏 AI 面板">' + icon('panel-right', 16) + '</button>' +
+      '<button class="ibtn' + (document.getElementById('app').classList.contains('rp-collapsed') ? '' : ' active') + '" id="rt-panel-toggle" aria-label="显示 / 隐藏 AI 面板" aria-pressed="' + !document.getElementById('app').classList.contains('rp-collapsed') + '" title="显示 / 隐藏 AI 面板">' + icon('panel-right', 16) + '</button>' +
       (p.status === 'done'
         ? '<span class="btn-done is-done">' + icon('circle-check', 14) + ' 已完成</span>'
         : '<button class="btn-done" id="btn-mark-done">' + icon('circle-check', 14) + ' 阅读完成</button>') +
-      '<button class="ibtn" id="rt-menu" title="文献操作">' + icon('more', 17) + '</button>' +
+      '<button class="ibtn" id="rt-menu" aria-label="文献操作" title="文献操作">' + icon('more', 17) + '</button>' +
       '</div>';
 
     tb.querySelector('#rt-back').addEventListener('click', () => App.closePaper());
@@ -498,6 +500,7 @@ const Reader = {
     });
     tb.querySelector('#rt-panel-toggle').addEventListener('click', () => {
       document.getElementById('app').classList.toggle('rp-collapsed');
+      UI.syncPanels();
       setTimeout(() => { Reader.onResize(); Reader.renderToolbar(); }, 300);
     });
     tb.querySelector('#rt-menu').addEventListener('click', (e) => {
@@ -545,6 +548,7 @@ const Reader = {
     });
     this.removeSelPop();
     this.renderToolbar();
+    if (t === 'pen') UI.toast('在页面上按住涂抹即可绘制；再次点击画笔按钮可换颜色');
     if (t === 'marker') UI.toast('在正文上划选句子即可高亮；再次点击荧光笔按钮可换颜色');
     if (t === 'region') UI.toast('在页面上框选区域，截图将送入 AI 对话');
   },

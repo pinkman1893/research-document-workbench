@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 1.2.0 - 2026-09-03
+
+- Refine the document library, upload surface and reader toolbar with valid interactive structure, accessible names and visible keyboard focus.
+- Keep collapsed and off-screen panels out of keyboard and screen-reader navigation, and add modal focus trapping and focus restoration.
+- Label AI opinion paragraphs without discarding their inline Markdown formatting.
+- Prevent compact form controls from triggering iOS Safari viewport zoom.
+- Preserve the portable launchers, configurable local server and accurate AI privacy disclosure from the public edition.
+
 ## 1.1.0 - 2026-09-03
 
 - Prepare the public user edition with an online demo, portable release package, cross-platform launchers, product documentation and clearer AI privacy disclosure.

@@ -2,12 +2,26 @@
 const UI = {
   collapsed: {},
 
+  syncPanels() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    const rp = document.getElementById('right-panel');
+    const sb = document.getElementById('sidebar');
+    const narrow = innerWidth <= 1000;
+    if (rp) rp.inert = rp.hidden || app.classList.contains('rp-collapsed');
+    if (sb) sb.inert = narrow && !app.classList.contains('sidebar-open');
+  },
+
   init() {
     this.closeCtx();
-    document.getElementById('btn-sb-toggle').addEventListener('click', () => document.getElementById('app').classList.toggle('sidebar-open'));
+    document.getElementById('btn-sb-toggle').addEventListener('click', () => {
+      document.getElementById('app').classList.toggle('sidebar-open');
+      this.syncPanels();
+    });
     matchMedia('(max-width: 1000px)').addEventListener('change', e => {
       if (e.matches) document.getElementById('app').classList.add('rp-collapsed');
       else document.getElementById('app').classList.remove('sidebar-open');
+      this.syncPanels();
       Reader.renderToolbar(); Reader.onResize();
     });
     document.getElementById('brand-mark').innerHTML = icon('book-open', 19);
@@ -69,10 +83,12 @@ const UI = {
     });
     document.getElementById('btn-rp-collapse').addEventListener('click', () => {
       document.getElementById('app').classList.toggle('rp-collapsed');
+      this.syncPanels();
       setTimeout(() => Reader.onResize(), 300);
     });
     document.getElementById('btn-rp-expand').addEventListener('click', () => {
       document.getElementById('app').classList.remove('rp-collapsed');
+      this.syncPanels();
       setTimeout(() => Reader.onResize(), 300);
     });
     document.getElementById('btn-ai-settings').addEventListener('click', () => AI.openSettings());
@@ -88,6 +104,7 @@ const UI = {
   render() {
     this.renderSidebar();
     this.renderMain();
+    this.syncPanels();
   },
 
   /* ---------- 侧栏 ---------- */
@@ -135,12 +152,12 @@ const UI = {
       UI.bindSectionDrop(h);
     });
     document.querySelectorAll('.paper-row').forEach(r => {
-      r.addEventListener('click', (e) => {
-        if (e.target.closest('.pr-kebab')) return;
+      const main = r.querySelector('.pr-main');
+      if (main) main.addEventListener('click', () => {
         App.openPaper(r.dataset.id);
       });
       const kb = r.querySelector('.pr-kebab');
-      if (kb) kb.addEventListener('click', (e) => { e.stopPropagation(); UI.paperMenu(e.currentTarget, r.dataset.id); });
+      if (kb) kb.addEventListener('click', (e) => { e.stopPropagation(); UI.paperMenu(kb, r.dataset.id); });
       UI.bindRowDrag(r);
     });
   },
@@ -149,6 +166,7 @@ const UI = {
   bindRowDrag(row) {
     row.draggable = true;
     row.addEventListener('dragstart', (e) => {
+      if (e.target.closest('.pr-kebab')) { e.preventDefault(); return; }
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/rd-row', row.dataset.id);
       row.classList.add('dragging');
@@ -237,12 +255,14 @@ const UI = {
       progress = '<div class="pr-progress"><i style="width:' + pct + '%"></i></div>' +
         '<div class="pr-prog-label">P' + p.progress.page + ' / ' + p.pageCount + ' · ' + pct + '%</div>';
     }
-    return '<button class="paper-row' + (p.id === App.paperId ? ' active' : '') + (p.status === 'done' ? ' done' : '') + '" data-id="' + p.id + '">' +
+    return '<div class="paper-row' + (p.id === App.paperId ? ' active' : '') + (p.status === 'done' ? ' done' : '') + '" data-id="' + p.id + '">' +
+      '<button type="button" class="pr-main">' +
       '<div class="pr-title">' + esc(p.title) + '</div>' +
       '<div class="pr-meta">' + chip + '<span>' + fmtSize(p.size) + '</span><span>' + fmtDate(p.addedAt) + '</span></div>' +
       progress +
-      '<span class="pr-kebab" title="更多操作">' + icon('more', 15) + '</span>' +
-      '</button>';
+      '</button>' +
+      '<button type="button" class="pr-kebab" aria-label="更多操作：' + esc(p.title) + '" title="更多操作">' + icon('more', 15) + '</button>' +
+      '</div>';
   },
 
   /* ---------- 主区 ---------- */
@@ -259,6 +279,7 @@ const UI = {
       this.renderHome();
     }
     this._lastView = App.view;
+    this.syncPanels();
   },
 
   renderHome() {
@@ -281,9 +302,9 @@ const UI = {
       '<div class="hstat"><div class="num">' + counts.reading + '</div><div class="lbl">正在阅读</div></div>' +
       '<div class="hstat"><div class="num">' + counts.done + '</div><div class="lbl">已完成</div></div>' +
       '</div>' +
-      '<div class="home-drop" id="home-drop">' + icon('upload', 34) +
+      '<button type="button" class="home-drop" id="home-drop">' + icon('upload', 34) +
       '<div class="hd-main">拖入 PDF 文献，或点击选择文件</div>' +
-      '<div class="hd-sub">支持一次添加多篇 · 首次打开将自动进入「正在阅读」</div></div>' +
+      '<div class="hd-sub">支持一次添加多篇 · 首次打开将自动进入「正在阅读」</div></button>' +
       (recent.length ? '<div class="home-recent"><h3>最近阅读</h3>' + recent.map(p =>
         '<button class="recent-row" data-id="' + p.id + '">' + icon('file-text', 16) +
         '<span class="recent-title">' + esc(p.title) + '</span>' +
@@ -512,25 +533,41 @@ const UI = {
   },
 
   /* ---------- 弹窗 ---------- */
+  _lastTrigger: null,
+
   closeModal() {
     const l = document.getElementById('modal-layer');
     if (l.hidden) return;
     l.hidden = true; l.innerHTML = '';
     document.getElementById('ctx-layer').style.pointerEvents = 'none';
+    l.onkeydown = null; l.onclick = null;
+    if (this._lastTrigger && this._lastTrigger.isConnected && typeof this._lastTrigger.focus === 'function') this._lastTrigger.focus();
+    this._lastTrigger = null;
   },
 
   modal(title, bodyHTML, buttons, opts) {
     opts = opts || {};
     const l = document.getElementById('modal-layer');
+    const trigger = document.activeElement;
+    this._lastTrigger = trigger && trigger !== document.body ? trigger : null;
     l.hidden = false;
-    l.innerHTML = '<div class="modal' + (opts.wide ? ' wide' : '') + '">' +
-      '<div class="modal-head"><h3>' + esc(title) + '</h3><button class="ibtn" data-act="close">' + icon('x', 17) + '</button></div>' +
+    l.innerHTML = '<div class="modal' + (opts.wide ? ' wide' : '') + '" role="dialog" aria-modal="true" aria-label="' + esc(title) + '">' +
+      '<div class="modal-head"><h3>' + esc(title) + '</h3><button class="ibtn" data-act="close" aria-label="关闭">' + icon('x', 17) + '</button></div>' +
       '<div class="modal-body">' + bodyHTML + '</div>' +
       '<div class="modal-foot">' + buttons.map((b, i) =>
         '<button class="' + (b.cls || 'btn-plain') + '" data-i="' + i + '">' + esc(b.label) + '</button>').join('') +
       '</div></div>';
     l.querySelector('[data-act="close"]').addEventListener('click', () => this.closeModal());
-    l.addEventListener('click', (e) => { if (e.target === l) this.closeModal(); });
+    l.onclick = (e) => { if (e.target === l) this.closeModal(); };
+    l.onkeydown = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusables = Array.from(l.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+        .filter(el => !el.disabled && el.offsetParent !== null);
+      if (!focusables.length) return;
+      const first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     const btns = l.querySelectorAll('.modal-foot button');
     btns.forEach((b, i) => b.addEventListener('click', () => {
       const r = buttons[i].onClick && buttons[i].onClick();

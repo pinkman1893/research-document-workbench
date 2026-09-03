@@ -50,7 +50,7 @@ def validate_html_assets() -> None:
         if not clean or clean.startswith(("data:", "http://", "https://", "#")):
             continue
         require((ROOT / clean).is_file(), f"Missing local resource referenced by index.html: {ref}")
-    require("?v=15" in html, "Expected the v15 browser cache key in index.html")
+    require("?v=16" in html, "Expected the v16 browser cache key in index.html")
 
 
 def validate_vendor() -> None:

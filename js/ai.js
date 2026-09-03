@@ -403,9 +403,9 @@ const AI = {
       '<div class="quote-tray" id="quote-tray"></div>' +
       '<div class="img-tray" id="img-tray"></div>' +
       '<div class="composer"><div class="composer-box">' +
-      '<textarea id="chat-input" rows="1" placeholder="向 AI 提问这篇论文…"></textarea>' +
+      '<textarea id="chat-input" rows="1" aria-label="向 AI 提问这篇论文" placeholder="向 AI 提问这篇论文…"></textarea>' +
       '<div class="composer-bar">' +
-      '<button class="ibtn" id="btn-attach" title="添加图片">' + icon('image', 16) + '</button>' +
+      '<button class="ibtn" id="btn-attach" aria-label="添加图片" title="添加图片">' + icon('image', 16) + '</button>' +
       '<span class="composer-hint">Enter 发送 · 可粘贴图片</span>' +
       '<button class="send-btn' + (this._job ? ' is-stop' : '') + '" id="btn-send" title="' + (this._job ? '停止生成' : '发送') + '" aria-label="' + (this._job ? '停止生成' : '发送') + '">' + icon(this._job ? 'square' : 'arrow-up', 15) + '</button>' +
       '</div></div>' +
