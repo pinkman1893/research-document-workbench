@@ -3,6 +3,7 @@
 .commandcode/
 audit-*/
 output/
+dist/
 untitled-project/
 
 # Generated fixtures and local test files

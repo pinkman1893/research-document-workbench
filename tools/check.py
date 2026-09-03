@@ -50,7 +50,7 @@ def validate_html_assets() -> None:
         if not clean or clean.startswith(("data:", "http://", "https://", "#")):
             continue
         require((ROOT / clean).is_file(), f"Missing local resource referenced by index.html: {ref}")
-    require("?v=14" in html, "Expected the v14 browser cache key in index.html")
+    require("?v=15" in html, "Expected the v15 browser cache key in index.html")
 
 
 def validate_vendor() -> None:
@@ -72,12 +72,18 @@ def validate_release_files() -> None:
     for relative in [
         "README.md",
         "CONTRIBUTING.md",
+        "docs/USER_GUIDE.md",
+        "docs/assets/logo.svg",
         "LICENSE",
         "SECURITY.md",
         "THIRD-PARTY-NOTICES.md",
         "CHANGELOG.md",
         ".gitignore",
         "启动工作台.bat",
+        "start-workbench.bat",
+        "start-workbench.command",
+        "start.sh",
+        "tools/package_release.py",
     ]:
         require((ROOT / relative).is_file(), f"Missing release file: {relative}")
 

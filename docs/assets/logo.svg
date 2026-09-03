@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">科研阅读工作台</title>
+  <desc id="desc">打开的书本与研究节点</desc>
+  <defs><linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ef"/><stop offset="1" stop-color="#e7eee8"/></linearGradient></defs>
+  <rect width="128" height="128" rx="30" fill="#789080"/>
+  <path d="M24 31c18-2 31 3 40 14v55c-9-11-22-16-40-14z" fill="url(#paper)" stroke="#f8f6ef" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M104 31c-18-2-31 3-40 14v55c9-11 22-16 40-14z" fill="url(#paper)" stroke="#f8f6ef" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M64 45v55" fill="none" stroke="#789080" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="83" cy="51" r="5" fill="#c6a96b"/><circle cx="92" cy="67" r="4" fill="#9f7764"/><circle cx="78" cy="75" r="4" fill="#7f93ac"/>
+  <path d="m83 51 9 16-14 8" fill="none" stroke="#8a7657" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

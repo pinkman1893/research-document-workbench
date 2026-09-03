@@ -274,7 +274,7 @@ const AI = {
     const body =
       '<div class="form-field"><label>配置名称</label><input id="pf-name" value="' + esc(p.name) + '"><div class="hint">例如：DeepSeek · 日常精读</div></div>' +
       '<div class="form-field"><label>Base URL</label><input id="pf-base" value="' + esc(p.baseUrl) + '" placeholder="https://api.deepseek.com/v1"><div class="hint">兼容 OpenAI 接口的服务地址，一般以 /v1 结尾</div></div>' +
-      '<div class="form-field"><label>API Key</label><div style="position:relative"><input id="pf-key" type="password" value="' + esc(p.apiKey) + '" placeholder="sk-…"><button class="ibtn" id="pf-eye" style="position:absolute;right:4px;top:2px">' + icon('eye', 15) + '</button></div><div class="hint">仅保存在本机浏览器，不会上传到任何第三方</div></div>' +
+      '<div class="form-field"><label>API Key</label><div style="position:relative"><input id="pf-key" type="password" value="' + esc(p.apiKey) + '" placeholder="sk-…"><button class="ibtn" id="pf-eye" style="position:absolute;right:4px;top:2px">' + icon('eye', 15) + '</button></div><div class="hint">Key 仅保存在当前浏览器；AI 请求会把 Key 和相关论文内容直接发送到此模型网关，请只配置可信服务</div></div>' +
       '<div class="form-field"><label>模型</label><input id="pf-model" value="' + esc(p.model) + '" placeholder="deepseek-chat / gpt-4o / glm-4.6 …"></div>' +
       '<div class="grid2">' +
       '<div class="form-field"><label>思考强度</label><select id="pf-think">' +

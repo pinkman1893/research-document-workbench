@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.1.0 - 2026-09-03
+
+- Prepare the public user edition with an online demo, portable release package, cross-platform launchers, product documentation and clearer AI privacy disclosure.
 - Publish the project under the MIT License with public contribution and issue guidance.
 
 ## 1.0.0 - 2026-09-03
