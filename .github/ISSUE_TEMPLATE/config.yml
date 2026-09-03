@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 安全漏洞
+    url: https://github.com/pinkman1893/research-document-workbench/security/advisories/new
+    about: 请通过私有安全公告报告漏洞，不要公开敏感细节。

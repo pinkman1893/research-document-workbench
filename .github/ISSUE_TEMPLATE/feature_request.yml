@@ -1,0 +1,24 @@
+name: 功能建议
+description: 提议新的阅读、标注、笔记或 AI 工作流
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 使用场景
+      description: 你正在完成什么任务，当前流程有什么阻碍？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议方案
+      description: 描述期望的交互和结果。
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案与补充信息
+      description: 可附草图或其他产品参考，请勿包含私人数据。

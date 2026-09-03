@@ -1,0 +1,28 @@
+# Local assistants and audits
+.workbuddy/
+.commandcode/
+audit-*/
+output/
+untitled-project/
+
+# Generated fixtures and local test files
+big-test.pdf
+test-paper.pdf
+tools/make_test_pdf.py
+
+# Python / Node / editor artifacts
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# Browser storage and exported user data
+*.sqlite
+*.sqlite3
+*.indexeddb*
+exports/
