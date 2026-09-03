@@ -2,8 +2,8 @@
 const DB = (() => {
   let _db = null;
   const DB_NAME = 'rd_db';
-  const VERSION = 1;
-  const STORES = ['workspaces', 'papers', 'blobs', 'notes', 'annos', 'cards', 'chats', 'usage'];
+  const VERSION = 2;
+  const STORES = ['workspaces', 'papers', 'blobs', 'notes', 'annos', 'cards', 'chats', 'usage', 'searchDocs', 'backups'];
   const pending = new Set();
 
   function open() {
@@ -11,15 +11,22 @@ const DB = (() => {
       const r = indexedDB.open(DB_NAME, VERSION);
       r.onupgradeneeded = (e) => {
         const d = e.target.result;
-        d.createObjectStore('workspaces', { keyPath: 'id' });
-        const papers = d.createObjectStore('papers', { keyPath: 'id' });
-        papers.createIndex('wsId', 'wsId', { unique: false });
-        d.createObjectStore('blobs', { keyPath: 'paperId' });
-        d.createObjectStore('notes', { keyPath: 'paperId' });
-        d.createObjectStore('annos', { keyPath: 'paperId' });
-        d.createObjectStore('cards', { keyPath: 'paperId' });
-        d.createObjectStore('chats', { keyPath: 'paperId' });
-        d.createObjectStore('usage', { autoIncrement: true });
+        if (!d.objectStoreNames.contains('workspaces')) d.createObjectStore('workspaces', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('papers')) {
+          const papers = d.createObjectStore('papers', { keyPath: 'id' });
+          papers.createIndex('wsId', 'wsId', { unique: false });
+        }
+        if (!d.objectStoreNames.contains('blobs')) d.createObjectStore('blobs', { keyPath: 'paperId' });
+        if (!d.objectStoreNames.contains('notes')) d.createObjectStore('notes', { keyPath: 'paperId' });
+        if (!d.objectStoreNames.contains('annos')) d.createObjectStore('annos', { keyPath: 'paperId' });
+        if (!d.objectStoreNames.contains('cards')) d.createObjectStore('cards', { keyPath: 'paperId' });
+        if (!d.objectStoreNames.contains('chats')) d.createObjectStore('chats', { keyPath: 'paperId' });
+        if (!d.objectStoreNames.contains('usage')) d.createObjectStore('usage', { autoIncrement: true });
+        if (!d.objectStoreNames.contains('searchDocs')) d.createObjectStore('searchDocs', { keyPath: 'paperId' });
+        if (!d.objectStoreNames.contains('backups')) {
+          const backups = d.createObjectStore('backups', { keyPath: 'id' });
+          backups.createIndex('createdAt', 'createdAt', { unique: false });
+        }
       };
       r.onsuccess = () => {
         _db = r.result;
@@ -62,11 +69,23 @@ const DB = (() => {
     put: (store, val) => req(store, 'readwrite', s => s.put(val)),
     del: (store, key) => req(store, 'readwrite', s => s.delete(key)),
     all: (store) => req(store, 'readonly', s => s.getAll()),
+    entries: store => transaction([store], 'readonly', (t, done) => {
+      const values = [];
+      const r = t.objectStore(store).openCursor();
+      r.onsuccess = () => {
+        const cursor = r.result;
+        if (!cursor) { done(values); return; }
+        values.push({ key: cursor.primaryKey, value: cursor.value });
+        cursor.continue();
+      };
+    }),
     clear: (store) => req(store, 'readwrite', s => s.clear()),
     batch: (stores, fn) => transaction(stores, 'readwrite', t => fn(t)),
     flush: () => Promise.all([...pending]),
     hasPending: () => pending.size > 0,
-    isOpen: () => !!_db
+    isOpen: () => !!_db,
+    stores: () => STORES.slice(),
+    version: () => VERSION
   };
 })();
 

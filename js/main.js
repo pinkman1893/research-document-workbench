@@ -32,6 +32,8 @@
 
   UI.render();
   AI.init();
+  Search.init();
+  Backup.init();
 
   // 阅读器滚动监听
   const sc = document.getElementById('reader-scroll');

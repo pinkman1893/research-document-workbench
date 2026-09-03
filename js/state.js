@@ -67,7 +67,9 @@ const App = {
       if (version !== this._navVersion) return false;
       this.wsId = id; this.paperId = null; this.view = 'home';
       try { localStorage.setItem('rd_last_ws', id); } catch (e) {}
-      UI.render(); return true;
+      UI.render();
+      if (typeof Search !== 'undefined') Search.onWorkspaceChanged();
+      return true;
     });
   },
 
@@ -214,6 +216,7 @@ const App = {
       UI.toast('已添加 ' + ok + ' 篇文献到待读区');
       UI.renderSidebar();
       UI.renderHome();
+      if (typeof Search !== 'undefined' && Search.isActive()) Search.run(document.getElementById('global-search').value);
     }
   },
 
@@ -231,10 +234,10 @@ const App = {
   },
 
   deleteRecords(ids, workspaceId, replacement) {
-    const stores = ['papers', 'blobs', 'notes', 'annos', 'cards', 'chats', 'usage', 'workspaces'];
+    const stores = ['papers', 'blobs', 'notes', 'annos', 'cards', 'chats', 'searchDocs', 'usage', 'workspaces'];
     const set = new Set(ids);
     return DB.batch(stores, t => {
-      for (const name of stores.slice(0, 6)) for (const id of ids) t.objectStore(name).delete(id);
+      for (const name of stores.slice(0, 7)) for (const id of ids) t.objectStore(name).delete(id);
       const cursor = t.objectStore('usage').openCursor();
       cursor.onsuccess = () => { const c = cursor.result; if (!c) return; if (set.has(c.value.paperId)) c.delete(); c.continue(); };
       if (workspaceId) t.objectStore('workspaces').delete(workspaceId);
