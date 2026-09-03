@@ -28,6 +28,7 @@ const UI = {
     document.getElementById('ws-switch-ic').innerHTML = icon('chevron-down', 15);
     document.getElementById('btn-add-paper').innerHTML = icon('plus', 15) + '<span>添加文献</span>';
     document.getElementById('btn-class-manage').innerHTML = icon('sliders', 14) + '<span>管理分类</span>';
+    document.getElementById('btn-data').innerHTML = icon('library', 14) + '<span>备份与恢复</span>';
     document.getElementById('btn-ai-settings').innerHTML = icon('sliders', 16);
     document.getElementById('btn-rp-collapse').innerHTML = icon('panel-right', 16);
     document.getElementById('btn-rp-expand').innerHTML = icon('panel-right', 14);
@@ -58,6 +59,7 @@ const UI = {
       if (ws.classMode === 'tier') UI.tierManageMenu(e.currentTarget);
       else UI.categoryManageMenu(e.currentTarget);
     });
+    document.getElementById('btn-data').addEventListener('click', () => Backup.openManager());
 
     // 全局拖放
     let dragDepth = 0;
@@ -73,7 +75,13 @@ const UI = {
     window.addEventListener('dragover', (e) => e.preventDefault());
     window.addEventListener('drop', (e) => {
       e.preventDefault(); dragDepth = 0; overlay.hidden = true;
-      if (e.dataTransfer && e.dataTransfer.files.length) App.importFiles(e.dataTransfer.files);
+      if (!e.dataTransfer || !e.dataTransfer.files.length) return;
+      const files = Array.from(e.dataTransfer.files);
+      const backups = files.filter(f => /\.rdwb$/i.test(f.name));
+      if (backups.length) {
+        if (files.length !== 1) UI.toast('备份文件请单独导入', 'error');
+        else Backup.importFile(backups[0]);
+      } else App.importFiles(files);
     });
 
     // 右侧面板 tab
@@ -117,6 +125,8 @@ const UI = {
     });
     document.getElementById('btn-class-manage').querySelector('span').textContent =
       ws.classMode === 'tier' ? '管理等级' : '管理分类';
+
+    if (typeof Search !== 'undefined' && Search.isActive() && Search.renderList()) return;
 
     const papers = App.wsPapers();
     const byOrder = arr => arr.slice().sort((a, b) =>

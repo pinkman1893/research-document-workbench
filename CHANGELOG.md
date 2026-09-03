@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 1.3.0 - 2026-09-03
+
+- Add a versioned `.rdwb` export format containing all workspaces, PDFs, reading state, annotations, notes, cards, chats, usage records and cached full-text indexes.
+- Validate backup structure, references, lengths and SHA-256 digests before allowing atomic replacement or collision-safe merge import.
+- Exclude model API keys by default and require an explicit opt-in for sensitive manual exports.
+- Add configurable browser-local automatic snapshots with download, restore, retention and a clear same-origin storage warning.
+- Add current-workspace search across titles, PDF text layers, notes, highlights, AI chats and paper cards.
+- Build cancelable PDF text indexes on demand, persist them in IndexedDB, and jump search results back to their source page.
+- Upgrade the IndexedDB schema from version 1 to version 2 without discarding existing user data.
+
 ## 1.2.0 - 2026-09-03
 
 - Refine the document library, upload surface and reader toolbar with valid interactive structure, accessible names and visible keyboard focus.
